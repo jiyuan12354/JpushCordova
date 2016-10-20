@@ -1,0 +1,23 @@
+{
+    "prepare_queue": {
+        "installed": [],
+        "uninstalled": []
+    },
+    "config_munge": {
+        "files": {}
+    },
+    "installed_plugins": {
+        "jpush-phonegap-plugin": {
+            "API_KEY": "8d22215b59f5d825779baaa8",
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        },
+        "cordova-plugin-whitelist": {
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        }
+    },
+    "dependent_plugins": {
+        "cordova-plugin-device": {
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        }
+    }
+}

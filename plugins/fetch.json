@@ -1,0 +1,28 @@
+{
+    "jpush-phonegap-plugin": {
+        "source": {
+            "type": "local",
+            "path": "C:\\Users\\dengjian\\Desktop\\jpush-phonegap-plugin-master"
+        },
+        "is_top_level": true,
+        "variables": {
+            "API_KEY": "8d22215b59f5d825779baaa8"
+        }
+    },
+    "cordova-plugin-device": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-device"
+        },
+        "is_top_level": false,
+        "variables": {}
+    },
+    "cordova-plugin-whitelist": {
+        "source": {
+            "type": "registry",
+            "id": "cordova-plugin-whitelist@1"
+        },
+        "is_top_level": true,
+        "variables": {}
+    }
+}
