@@ -3,12 +3,16 @@
  */
 'use strict';
 
-    var app = angular.module('myApp',['ui.router','home.controllers']);
+    var app = angular.module('myApp',['ui.router','home.controllers','detail.controller']);
 
     app.config(function($stateProvider, $urlRouterProvider) {
         $stateProvider.state('home', {
             url: '/home',
-            templateUrl: 'module/homeView/home.html'
+            templateUrl: 'module/home/home.html'
+        });
+        $stateProvider.state('message-detail', {
+            url: '/messageDetail/:PushDate&:Content',
+            templateUrl: 'module/messageDetail/detail.html'
         });
         $urlRouterProvider.otherwise('/home');
     });

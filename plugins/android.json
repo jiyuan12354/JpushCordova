@@ -13,6 +13,12 @@
         },
         "cordova-plugin-whitelist": {
             "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        },
+        "cordova-sqlite-storage": {
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        },
+        "cordova-plugin-console": {
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
         }
     },
     "dependent_plugins": {

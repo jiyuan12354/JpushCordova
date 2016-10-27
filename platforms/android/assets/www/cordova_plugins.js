@@ -15,6 +15,14 @@ module.exports = [
         "clobbers": [
             "JPush"
         ]
+    },
+    {
+        "id": "cordova-sqlite-storage.SQLitePlugin",
+        "file": "plugins/cordova-sqlite-storage/www/SQLitePlugin.js",
+        "pluginId": "cordova-sqlite-storage",
+        "clobbers": [
+            "SQLitePlugin"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -22,7 +30,9 @@ module.exports.metadata =
 {
     "cordova-plugin-device": "1.1.3",
     "jpush-phonegap-plugin": "2.2.5",
-    "cordova-plugin-whitelist": "1.3.0"
+    "cordova-plugin-whitelist": "1.3.0",
+    "cordova-sqlite-storage": "1.4.8",
+    "cordova-plugin-console": "1.0.4"
 };
 // BOTTOM OF METADATA
 });
