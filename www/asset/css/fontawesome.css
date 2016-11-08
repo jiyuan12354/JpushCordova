@@ -1571,7 +1571,7 @@
 /*右箭头*/
 .div105{display:block; float:left; color:#FFF; height:50px; position:relative; background: #ffffff;}
 .div105:after
-{ content:"\f105"; color: #bababa; position:absolute; width:36px;height:36px;  font-size:36px;font-weight:100; top:-20%; left:50%;font-family:'FontAwesome'}
+{ content:"\f105"; color: #bababa; /*position:absolute;*/ width:36px;height:36px;  font-size:36px;padding-bottom: 30px;/*font-weight:100; top:-20%; left:50%;*/font-family:'FontAwesome'}
 
 
 .div106{display:block; float:left; width:100px; color:#FFF; height:100px; position:relative; background:#006600;}
