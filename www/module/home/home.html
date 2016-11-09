@@ -12,7 +12,7 @@
         </div>
         <div class="col-xs-4 r1 right {{$root.selectAllFlag?'':'padding-right15'}}">
             <a class="text-btn" ng-click="selectAll()" ng-if="$root.showEditFlag">{{selectMessage}}</a>
-            <a class="text-btn" ng-click="showEdit()">{{editMessage}}</a>
+            <a class="text-btn" ng-click="showEdit()" ng-if="messgaes.length!=0">{{editMessage}}</a>
             <!--<a class="icon-btn icon-indicate pull-right" ui-sref="shop-suggestion-responsedlist"> </a>-->
         </div>
     </div>
@@ -276,10 +276,10 @@
     </div>-->
     <div ng-if="$root.selectAllFlag||$root.choosedEditIds.length!=0" style="position:fixed;bottom:0;height: 0.45rem;width: 100%;background-color: #efefef">
         <div class="col-xs-6 r1 left" ng-click="doDelete()" style="text-align: center;font-size: 0.18rem;bottom:-0.1rem">
-            <a class="text-btn" style="color: #181818">删除</a>
+            <a class="text-btn" style="color: #293729">删除</a>
         </div>
-        <div class="col-xs-6 r1 right" ng-click="setRead()" style="text-align: center;font-size: 0.18rem;bottom:-0.1rem">
-            <a class="text-btn" style="color: #181818">已读</a>
+        <div class="col-xs-6 r1 right" ng-click="unReadedMsgCount!=0&&setRead()" style="text-align: center;font-size: 0.18rem;bottom:-0.1rem">
+            <a class="text-btn" style={{(unReadedMsgCount!=0)?"color:#585858":"color:#ffffff"}}>已读</a>
         </div>
     </div>
 </div>

@@ -6,14 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <!--<meta http-equiv="Content-Type" content="text/html; charset=utf-8">-->
     <link href="asset/css/bootstrap/css/bootstrap.css" rel="stylesheet">
-    <!--<link rel="stylesheet" href="asset/css/cssReset.css">-->
+    <link rel="stylesheet" href="asset/css/cssReset.css">
     <!--<link href="asset/css/Font-Awesome-3.2.1/css/font-awesome.min.css" rel="stylesheet" />-->
     <!--<link rel="stylesheet" href="http://fontawesome.io/assets/font-awesome/css/font-awesome.css">-->
     <link rel="stylesheet" href="asset/css/style.css">
-    <link href="asset/css/fontawesome.css" rel="stylesheet">
+    <!--<link href="asset/css/fontawesome.css" rel="stylesheet">-->
     <!--<link rel="stylesheet" href="asset/css/jqm-demos.css">-->
     <!--<link rel="stylesheet" href="asset/css/jquery.mobile-1.4.5.css">-->
     <title>JPush Phonegap Simple Demo</title>
+    <style>
+        *{ margin:0; padding:0; list-style:none}
+        body{ font-size:0.12rem; color:#666;}
+        .modal {
+            display: block;
+        }
+    </style>
+    <script>
+        var fontSize = 100;
+        var elm = document.documentElement;
+        elm.style.fontSize = fontSize * (elm.clientWidth/320) + 'px';
+    </script>
 </head>
 <body ng-app="myApp">
 <div ui-view>
@@ -24,10 +36,18 @@
 <!--<script type="text/javascript" src="lib/jquery.min.js"></script>-->
 <!--<script src="asset/css/bootstrap/js/bootstrap.js"></script>-->
 <!--<script type="text/javascript" src="lib/jquery.mobile-1.4.5.min.js"></script>-->
-<script type="text/javascript" src="lib/angular.min.js"></script>
+<script type="text/javascript" src="lib/angular.js"></script>
+<script type="text/javascript" src="lib/angular-touch.js"></script>
+<!--<script type="text/javascript" src="lib/angular-resource.js"></script>-->
+<!--<script type="text/javascript" src="lib/angular-sanitize.js"></script>-->
+<!--<script type="text/javascript" src="lib/angular-animate.js"></script>-->
 <script type="text/javascript" src="lib/angular-ui-router.min.js"></script>
 <script type="text/javascript" src="app-states.js"></script>
 <script type="text/javascript" src="module/home/homeControler.js"></script>
 <script type="text/javascript" src="module/messageDetail/messageDetail.js"></script>
+
+<!--<script src="asset/css/bootstrap/js/bootstrap.min.js"></script>-->
+<script src="lib/ui-bootstrap-tpls.min.js"></script>
+<script src="module/template/ModalUtil.js"></script>
 </body>
 </html>

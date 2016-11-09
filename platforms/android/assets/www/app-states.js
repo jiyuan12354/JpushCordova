@@ -3,7 +3,7 @@
  */
 'use strict';
 
-    var app = angular.module('myApp',['ui.router','home.controllers','detail.controller']);
+    var app = angular.module('myApp',['ui.router','home.controllers','detail.controller','ui.bootstrap','ngTouch']);
 
     app.config(function($stateProvider, $urlRouterProvider) {
         $stateProvider.state('home', {

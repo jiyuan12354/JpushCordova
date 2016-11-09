@@ -21,6 +21,13 @@ body {
 {
   margin:0px;
 }
+.col-xs-1,.col-xs-3,.col-xs-4,.col-xs-7,.col-xs-8
+{
+  padding:0;
+}
+.col-xs-1,.col-xs-8{
+  margin: 0.09rem 0;
+}
 .view-header {
   background: -moz-linear-gradient(top, #ef9569, #d25d2d);
   /*非IE6的其它*/
@@ -53,7 +60,11 @@ body {
   text-align: right;
   margin-top: 25px;
   /*padding-top: 15px;*/
-  padding-right: 30px;
+}
+
+.padding-right15
+{
+  padding-right:0.15rem;
 }
 .view-header .nav {
   font-size: 24px;
@@ -230,16 +241,12 @@ body {
   /*margin-bottom: 32px;*/
 }
 .view-body .list-group-item {
-  height: 95px;
   border-top: 0px;
+  border-bottom: 0px;
   border-left: 0px;
   border-right: 0px;
-  border-bottom: 1px solid #f9cc9e;
   border-radius: 0px;
-  margin-bottom: 10px;
-  padding:25px 0px;
-  /*padding-bottom: 20px;*/
-  /*padding-top: 25px;*/
+  padding: 0;
 }
 .list-group-item .icon {
   margin-top: 5px;
@@ -304,11 +311,11 @@ p .content {
   /*vertical-align: baseline;*/
   background-color: #f64f34;
   /*position: absolute;*/
-  /*margin: 20px 10px 10px 20px;*/
+  margin: 5px 10px 5px 0;
   /*top: 5px;*/
   /*right: 5px;*/
   /*padding: 6px;*/
-  margin-top: 12px;
+  /*margin-top: 12px;*/
   width: 18px;
   height: 18px;
   border-radius: 50%;
@@ -499,7 +506,7 @@ p .content {
   float: right;
   position: fixed;
   bottom: 15px;
-  right: 10px; 
+  right: 10px;
 
   /*position: absolute;
   bottom: 0px;
@@ -548,14 +555,16 @@ p .content {
 }
 .angle-right
 {
-  margin-top: 10px;
+  margin-top: 2px;
+  width: 20px;
+  height: 20px;
 }
 .view-body .input-group>.searchInput
 {
   float: left;
   height:36px;
   width:90%;
-  padding-left:30px;;
+  padding-left:30px;
   font-size: 12px;
   border-radius:18px;
   /*background-image: url('../image/search.png');*/
@@ -564,6 +573,10 @@ p .content {
   background-size: 20px 20px;
   background-position: 5px;
 }
+.search
+{
+  margin-bottom: 10px;
+}
 .list-group{
   overflow: hidden;
 }
@@ -571,4 +584,26 @@ p .content {
 {
   -webkit-transform: translate(-18%,0);
   -webkit-transition:all 0.3s linear;
+}
+.list-group .list-group-item
+{
+  overflow: hidden;
+  /*padding:0 0.15rem;*/
+  width: 3.866667rem;
+  border-bottom: 1px solid #f0f0f0;
+  /*border-top: 1px solid;*/
+  margin-bottom: 0.01rem;
+  -webkit-transition:all 0.3s linear;
+}
+.remove
+{
+  display: block;
+  float: left;
+  background-color: #f65035;
+  color: #fff;
+  /*width: 20%;*/
+  /*margin-left: 0.16rem;*/
+  font-size: 0.16rem;
+  text-align: center;
+  text-decoration: none;
 }

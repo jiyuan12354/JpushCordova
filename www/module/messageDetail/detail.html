@@ -1,7 +1,11 @@
 <div ng-controller="detailController">
     <div class="view-header">
         <div class="col-xs-4 r1 left">
-            <a class="text-btn" ui-sref="home">返回</a>
+            <a ui-sref="home" style="bottom: 0.05rem">
+                <img class="pull-left" style="width: 0.3rem;height: 0.3rem;margin-left: 0.15rem;border-radius: 50%" src="asset/image/goback.png">
+            </a>
+            <!-- class="text-btn"  style="margin-left: 0.15rem">返回</a>-->
+            <!--<div class="div104 pull-left" ng-click="$stage.go('home',{})"></div>-->
         </div>
         <div class="col-xs-4 r1 center">
             <span>
@@ -16,7 +20,7 @@
         <div class="panel-nav" >
 
             <div class="text-title1">
-                {{pushDate}}
+                {{pushDate |date:'yyyy-MM-dd HH:mm:ss.sss'}}
             </div>
             <div class="text-content1 col-lg-12">
                 <span>{{messageContent}}</span>

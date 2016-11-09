@@ -1,0 +1,25 @@
+
+<div class="list-group-item {{message.id==$root.choosedId?'selected':''}}"  ng-swipe-left = "showDeleteBtn(message.id)" ng-swipe-right = "hideDeleteBtn()">
+
+    <div class="col-xs-1" ng-click="!$root.showEditFlag&&stategoDetail(message)">
+        <span class="icon-btn-alert pull-left" ng-show="message.readflag!=1"></span>
+    </div>
+    <div class="col-xs-8 pull-left" ng-click="!$root.showEditFlag&&stategoDetail(message)">
+        <!--<small class="text-muted pull-right ml date">2016-8-15</small>-->
+        <div>
+            <span class="title">{{message.messageContent}}</span>
+        </div>
+        <small class="content">
+            {{message.pushDate |date:dateFilter}}
+        </small>
+    </div>
+    <div class="col-xs-3" style="height:0.45rem">
+        <img class="angle-right pull-left" style="width: 0.18rem;height: 0.18rem;margin: 0.2rem 0" src="asset/image/angle-right.png" ng-click="stategoDetail(message)" ng-if="message.id!=$root.choosedId&&!$root.showEditFlag">
+        <img class="angle-right pull-left" style="width: 0.18rem;height: 0.18rem;margin: 0.2rem 0" src="asset/image/btn_buxuanzetupian_ov.png" ng-click="checkItem(message.id)" ng-if="$root.showEditFlag&&($root.choosedEditIds.indexOf(message.id) == -1)&&!$root.selectAllFlag">
+        <img class="angle-right pull-left" style="width: 0.18rem;height: 0.18rem;margin: 0.2rem 0" src="asset/image/btn_xuanzetupian_ov.png" ng-click="uncheckItem(message.id)" ng-if="$root.showEditFlag&&($root.choosedEditIds.indexOf(message.id) != -1)||$root.selectAllFlag">
+        <div class="pull-right" ng-if="message.id==$root.choosedId">
+            <a href="javascript:;" style="width: 0.96rem;height:0.63rem;padding-top:0.18rem;" class="remove" ng-click="delete(message)">删除</a>
+        </div>
+    </div>
+    <div style="font: 0px/0px sans-serif;clear: both;display: block"> </div>
+</div>
