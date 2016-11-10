@@ -65,15 +65,8 @@ angular.module('home.controllers', ['fsCordova'])
                     $state.go('message-detail',{Content:message.messageContent,PushDate:message.pushDate});
                     var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
                     db.transaction(function(tx){
-                        var sql1 = "update jpush_message set readflag = 1 where id="+message.id;
-                        tx.executeSql(sql1,[], function (tx, res) {
-                            scope.$parent.$parent.$apply(function()
-                            {
-                                var index = scope.$parent.$parent.messages.indexOf(message);
-                                scope.$parent.$parent.messages.splice(index,1);
-
-                            });
-
+                        var sql = "update jpush_message set readflag = 1 where id="+message.id;
+                        tx.executeSql(sql,[], function (tx, res) {
                         });
                     });
                 };
@@ -81,8 +74,8 @@ angular.module('home.controllers', ['fsCordova'])
                 {
                     var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
                     db.transaction(function(tx){
-                        var sql1 = "delete from jpush_message where id="+message.id;
-                        tx.executeSql(sql1,[], function (tx, res) {
+                        var sql = "delete from jpush_message where id="+message.id;
+                        tx.executeSql(sql,[], function (tx, res) {
                             scope.$parent.$parent.$apply(function()
                             {
                                 var index = scope.$parent.$parent.messages.indexOf(message);
@@ -323,58 +316,82 @@ angular.module('home.controllers', ['fsCordova'])
                 };
 
                 //监控事件"jpush.openNotification"
-/*                var onOpenNotification = function(event) {
+                var onOpenNotification = function(event) {
                     try {
+                        //根据当前时间，刷新每个消息的日期过滤器，当天只显示HH:mm:ss，否则显示yyyy-MM-dd
+                        $rootScope.dateRefresh = (new Date()).valueOf();
+
+                        var iDkey = "cn.jpush.android.NOTIFICATION_ID";// NOTIFICATION_ID的键
+                        var event_extras = event.extras; // 包含NOTIFICATION_ID数值
+
+                        //数据库存储字段
                         var messageContent;
-                        var pushDate = new Date();
-                        var date;
+                        var notificationId;
+                        var pushDate = (new Date()).valueOf();
+
+                        //给存储字段进行赋值
                         if (device.platform == "Android") {
                             messageContent = event.alert;
-                            date = event.timeStamp;
                             //pushDate.setTime(date);
-                            pushDate.setTime(date);
                         } else {
+                            var event_extras = event.aps.extras;
                             messageContent = event.aps.alert;
-                            pushDate.setTime(event.aps.timeStamp);
                         }
-                        //存储数据
-                        var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
-                        db.transaction(function(tx) {
-                            //tx.executeSql('DROP TABLE IF EXISTS jpush_message');
-                            tx.executeSql('CREATE TABLE IF NOT EXISTS jpush_message (id integer primary key NOT NULL, messageContent text NOT NULL, pushDate timestamp NOT NULL,readflag integer)');
+                        for(var i in event_extras) {
+                            if(i == iDkey)
+                            {
+                                notificationId = event_extras[i];
+                            }
+                        }
+                        $state.go('message-detail',{Content:event.alert,PushDate:pushDate});
 
-                            tx.executeSql("INSERT INTO jpush_message (messageContent, pushDate,readflag) VALUES (?,?,?)", [messageContent,date,0], function(tx, res) {
-                                searchMessage($scope.searchValue);
-                            }, function(e) {
-                                alert("ERROR: " + e.message);
+                        //下面代码是为了更新消息的已读状态
+                        var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
+                        db.transaction(function(tx){
+                            var sql = "update jpush_message set readflag = 1 where notificationId="+notificationId;
+                            tx.executeSql(sql,[], function (tx, res) {
                             });
                         });
-
                     } catch (exception) {
                         console.log("JPushPlugin:onOpenNotification" + exception);
                     }
-                };*/
+                };
 
                 var onReceiveNotification = function(event) {
                     try {
                         //根据当前时间，刷新每个消息的日期过滤器，当天只显示HH:mm:ss，否则显示yyyy-MM-dd
                         $rootScope.dateRefresh = (new Date()).valueOf();
 
+                        var iDkey = "cn.jpush.android.NOTIFICATION_ID";// NOTIFICATION_ID的键
+                        var event_extras = event.extras; // 包含NOTIFICATION_ID数值
+
+                        //数据库存储字段
                         var messageContent;
+                        var notificationId;
                         var pushDate = (new Date()).valueOf();
+
+                        //给存储字段进行赋值
                         if (device.platform == "Android") {
                             messageContent = event.alert;
                             //pushDate.setTime(date);
                         } else {
+                            var event_extras = event.aps.extras;
                             messageContent = event.aps.alert;
                         }
+                        for(var i in event_extras) {
+                            if(i == iDkey)
+                            {
+                                notificationId = event_extras[i];
+                            }
+                        }
+
                         //存储数据
                         var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
                         db.transaction(function(tx) {
                             //tx.executeSql('DROP TABLE IF EXISTS jpush_message');
-                            tx.executeSql('CREATE TABLE IF NOT EXISTS jpush_message (id integer primary key NOT NULL, messageContent text NOT NULL, pushDate timestamp NOT NULL,readflag integer)');
+                            tx.executeSql('CREATE TABLE IF NOT EXISTS jpush_message (id integer primary key NOT NULL,notificationId integer NOT NULL, messageContent text NOT NULL, pushDate timestamp NOT NULL,readflag integer)');
 
-                            tx.executeSql("INSERT INTO jpush_message (messageContent, pushDate,readflag) VALUES (?,?,?)", [messageContent,pushDate,0], function(tx, res) {
+                            tx.executeSql("INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)", [messageContent,pushDate,notificationId,0], function(tx, res) {
                                 searchMessage($scope.searchValue);
                             }, function(e) {
                                 alert("ERROR: " + e.message);
@@ -390,7 +407,7 @@ angular.module('home.controllers', ['fsCordova'])
                 var initiateUI = function() {
                     try {
                         window.plugins.jPushPlugin.init();
-                        //getRegistrationID();
+                        getRegistrationID();
                         if (device.platform != "Android") {
                             window.plugins.jPushPlugin.setDebugModeFromIos();
                             window.plugins.jPushPlugin.setApplicationIconBadgeNumber(0);
@@ -403,8 +420,26 @@ angular.module('home.controllers', ['fsCordova'])
                     }
                 };
 
+                // 获取RegistrationID
+                var getRegistrationID = function () {
+                    window.plugins.jPushPlugin.getRegistrationID(function (data) {
+                        try {
+                            console.log("JPushPlugin:registrationID is " + data);
+                            if (data.length == 0) {
+                                var t1 = window.setTimeout(getRegistrationID, 1000);
+                            }
+                            //$scope.message += "JPushPlugin:registrationID is " + data;
+                            $scope.registrationID = data;
+                        } catch (exception) {
+                            console.log(exception);
+                        }
+                    });
+
+                };
+
+
                 document.addEventListener("deviceready", onDeviceReady, false);
-                //document.addEventListener("jpush.openNotification", onOpenNotification, false);
+                document.addEventListener("jpush.openNotification", onOpenNotification, false);
                 document.addEventListener("jpush.receiveNotification", onReceiveNotification, false);
             });
         }]);

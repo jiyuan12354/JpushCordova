@@ -607,3 +607,7 @@ p .content {
   text-align: center;
   text-decoration: none;
 }
+.text-btn:hover, .text-btn:focus
+{
+  text-decoration: none;
+}

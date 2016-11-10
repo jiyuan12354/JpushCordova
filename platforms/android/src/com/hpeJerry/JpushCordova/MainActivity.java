@@ -31,4 +31,14 @@ public class MainActivity extends CordovaActivity
         // Set by <content src="index.html" /> in config.xml
         loadUrl(launchUrl);
     }
+    @Override
+	public void onResume() {
+		super.onResume();
+		//JPushInterface.onResume(this);
+	}
+	@Override
+	public void onPause() {
+		super.onPause();
+		//JPushInterface.onPause(this);
+	}
 }
