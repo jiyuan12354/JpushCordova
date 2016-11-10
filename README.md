@@ -12,3 +12,5 @@ jpush123456
 
 应用名：JpushCordova;
 选择应用进行推送，目前只有Android平台
+
+需要Cordova环境才能安装到设备进行测试
