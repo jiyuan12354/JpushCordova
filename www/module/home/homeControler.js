@@ -375,7 +375,7 @@ angular.module('home.controllers', ['fsCordova'])
                             messageContent = event.alert;
                             //pushDate.setTime(date);
                         } else {
-                            var event_extras = event.aps.extras;
+                            event_extras = event.aps.extras;
                             messageContent = event.aps.alert;
                         }
                         for(var i in event_extras) {
