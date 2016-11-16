@@ -1,0 +1,12 @@
+{
+    "CFNetwork.framework": 1,
+    "CoreFoundation.framework": 1,
+    "CoreTelephony.framework": 1,
+    "SystemConfiguration.framework": 1,
+    "Foundation.framework": 1,
+    "UIKit.framework": 1,
+    "Security.framework": 1,
+    "libz.tbd": 1,
+    "AdSupport.framework": 1,
+    "UserNotifications.framework": 1
+}

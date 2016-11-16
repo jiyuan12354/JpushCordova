@@ -1,0 +1,32 @@
+<div ng-controller="detailController">
+    <div class="view-header">
+        <div class="col-xs-4 r1 left">
+            <a ui-sref="home" style="bottom: 0.10rem">
+                <img class="pull-left" style="width: 0.4rem;height: 0.4rem;margin-left: 0.05rem;" src="asset/image/back.png">
+            </a>
+            <!-- class="text-btn"  style="margin-left: 0.15rem">返回</a>-->
+            <!--<div class="div104 pull-left" ng-click="$stage.go('home',{})"></div>-->
+        </div>
+        <div class="col-xs-4 r1 center" style="text-align: center">
+            消息详情
+        </div>
+        <div class="col-xs-4 r1 right">
+            <!--<a class="text-btn">编辑</a>-->
+        </div>
+    </div>
+    <div class="view-body">
+        <div class="panel-nav" >
+
+            <div class="text-title1">
+                {{pushDate |date:'yyyy-MM-dd HH:mm:ss.sss'}}
+            </div>
+            <div class="text-content1 col-lg-12">
+                <span>{{messageContent}}</span>
+            </div>
+            <!--            <div class="date col-lg-12">
+                            <div class="icon icon-inprocess-ss" style="float:left;"></div>
+                            <div  >{{query.entity.request.RequestDate | date:'yyyy年MM月dd日 HH:mm'}}</div>
+                        </div>-->
+        </div>
+    </div>
+</div>
