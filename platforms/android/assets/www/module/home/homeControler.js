@@ -240,6 +240,7 @@ angular.module('home.controllers', ['fsCordova'])
                     //初始化
                     initiateUI();
 
+
                     //搜索关键字
                     $scope.searchValue = '';
 
@@ -254,6 +255,16 @@ angular.module('home.controllers', ['fsCordova'])
                     $scope.reset = function () {
                         $scope.searchValue = '';
                     };*/
+
+                    //服务器推送消息
+                    $scope.pushMessage = function(alert)
+                    {
+                        window.JpushServer.sendJpushMsg(alert,function(msg) {
+                            alert("success:"+msg);
+                        }, function(msg) {
+                            alert("failed:"+msg);
+                        });
+                    };
 
                     //延迟搜索，监控searchValue输入变化
                     var timeout;
@@ -279,6 +290,7 @@ angular.module('home.controllers', ['fsCordova'])
                             $rootScope.choosedEditIds.push(data.id);
                         });
                     };
+
 
 
                     $scope.setRead = function()

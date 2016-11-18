@@ -13,6 +13,9 @@
     <feature name="SQLitePlugin">
         <param name="android-package" value="io.sqlc.SQLitePlugin" />
     </feature>
+    <feature name="JpushMessage">
+        <param name="android-package" value="com.jpushServer.plugin.JpushServerPlugin" />
+    </feature>
     <name>JpushCordova</name>
     <description>
         A sample Apache Cordova application that responds to the deviceready event.

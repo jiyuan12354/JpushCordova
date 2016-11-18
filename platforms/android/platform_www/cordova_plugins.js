@@ -23,6 +23,14 @@ module.exports = [
         "clobbers": [
             "SQLitePlugin"
         ]
+    },
+    {
+        "id": "jpushServerPlugin.JpushServerPlugin",
+        "file": "plugins/jpushServerPlugin/www/JpushServerPlugin.js",
+        "pluginId": "jpushServerPlugin",
+        "clobbers": [
+            "JpushServer"
+        ]
     }
 ];
 module.exports.metadata = 
@@ -32,7 +40,8 @@ module.exports.metadata =
     "jpush-phonegap-plugin": "2.2.5",
     "cordova-plugin-whitelist": "1.3.0",
     "cordova-sqlite-storage": "1.4.8",
-    "cordova-plugin-console": "1.0.4"
+    "cordova-plugin-console": "1.0.4",
+    "jpushServerPlugin": "1.0.0"
 };
 // BOTTOM OF METADATA
 });
