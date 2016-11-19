@@ -6,6 +6,23 @@
     "config_munge": {
         "files": {}
     },
-    "installed_plugins": {},
-    "dependent_plugins": {}
+    "installed_plugins": {
+        "jpushServerPlugin": {
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        }
+    },
+    "dependent_plugins": {},
+    "modules": [
+        {
+            "id": "jpushServerPlugin.JpushServerPlugin",
+            "file": "plugins/jpushServerPlugin/www/JpushServerPlugin.js",
+            "pluginId": "jpushServerPlugin",
+            "clobbers": [
+                "JpushServer"
+            ]
+        }
+    ],
+    "plugin_metadata": {
+        "jpushServerPlugin": "1.0.0"
+    }
 }

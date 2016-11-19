@@ -611,3 +611,15 @@ p .content {
 {
   text-decoration: none;
 }
+.modal-header
+{
+  font-size: 0.08rem;
+}
+.modal-body
+{
+  font-size: 0.04rem;
+}
+.modal-footer
+{
+  padding: 0px;
+}

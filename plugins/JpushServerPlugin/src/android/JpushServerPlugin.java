@@ -34,11 +34,7 @@ public class JpushServerPlugin extends CordovaPlugin {
     private final String masterSecret = "823a530730f4a44d71bdf435";
     public JPushClient jpushClient = null;
     public void sendPush(String alert) {
-        Toast.makeText(cordova.getActivity(), "正在推送1...", Toast.LENGTH_SHORT).show();
-
         jpushClient = new JPushClient(masterSecret, appKey, 3);
-        Toast.makeText(cordova.getActivity(), "正在推送2...", Toast.LENGTH_SHORT).show();
-
         // HttpProxy proxy = new HttpProxy("localhost", 3128);
         // Can use this https proxy: https://github.com/Exa-Networks/exaproxy
 
@@ -167,9 +163,11 @@ public class JpushServerPlugin extends CordovaPlugin {
                     {
                         Toast.makeText(cordova.getActivity(), "error..."+appKey, Toast.LENGTH_SHORT).show();
                     }
+                    Toast.makeText(cordova.getActivity(), "推送成功", Toast.LENGTH_SHORT).show();
                     callbackContext.success("推送成功");
                     return true;
         }
+        Toast.makeText(cordova.getActivity(), "推送失败", Toast.LENGTH_SHORT).show();
         callbackContext.error("推送失败");
         return false;
     }

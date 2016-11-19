@@ -116,6 +116,7 @@ angular.module('home.controllers', ['fsCordova'])
             $scope.editMessage = '编辑'; //默认显示编辑，点击编辑之后显示取消
             $scope.selectMessage = '全选'; //全选和取消全选切换，默认显示全选
 
+            //$scope.doDeletePop();
             //切换编辑文字，并显示编辑图片
             $scope.showEdit = function () {
                 if($scope.editMessage==$scope.editOptionMessages[0])//点击编辑
@@ -142,189 +143,207 @@ angular.module('home.controllers', ['fsCordova'])
                 $scope.selectMessage = $rootScope.selectAllFlag?'取消全选':"全选";
             };
 
+            //从表jpush_message中遍历出过滤后的messages，返回到$scope.messages
+            $scope.searchMessage = function(searchValue){
+                var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
+                db.transaction(function(tx){
+                    var sql1 = "select * from jpush_message where messageContent like '%"+searchValue+"%'";
+                    tx.executeSql(sql1,[], function (tx, res) {
+                        $scope.$apply(function()
+                        {
+                            $scope.messages = [];
+                            for(var i= 0;i<res.rows.length;i++)
+                            {
+                                $scope.messages.push(res.rows.item(res.rows.length-i-1));
+                            }
+                        });
+
+                    });
+
+                    var sql2 = "select count(*) as cnts from jpush_message where messageContent like '%"+searchValue+"%' and readflag=0";
+                    tx.executeSql(sql2,[], function (tx, res) {
+                        $scope.$apply(function()
+                        {
+                            $rootScope.unReadedMsgCount = res.rows.item(0).cnts;
+                        });
+                    });
+                });
+                reset();
+            };
+            var reset = function()
+            {
+                $rootScope.dateRefresh = (new Date()).valueOf();
+                $rootScope.choosedId = -1;
+                $rootScope.showEditFlag = false;
+                $rootScope.selectAllFlag = false;
+                $rootScope.choosedEditIds = [];
+                $scope.editMessage = '编辑';
+                $scope.selectMessage = '全选';
+            };
+//删除确认弹框
+            var doDelete = function()
+            {
+                var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
+                db.transaction(function(tx){
+                    var sql= '';
+                    if($rootScope.selectAllFlag||($rootScope.choosedEditIds.length==$scope.messages.length))
+                    {
+                        sql = "delete from jpush_message";
+                    }
+                    else
+                    {
+                        var iDstr = '(';//组装数组数据传递给sqlite
+                        angular.forEach($rootScope.choosedEditIds,function(data,index,array)
+                        {
+                            iDstr = iDstr+array[index]+',';
+                        });
+                        iDstr = iDstr+"-1)"//组装完毕
+                        sql = "delete from jpush_message where id in"+iDstr;
+                    }
+                    tx.executeSql(sql,[], function (tx, res) {
+                        $scope.$apply(function()
+                        {
+                            $scope.searchMessage($scope.searchValue);
+                            //reset();
+                            //$state.go('home',{});
+                            //window.location.href = window.location.href;
+                        });
+                    });
+                });
+            };
+            $scope.ModalDeleteCtrl = function($scope, $modalInstance) {
+                 $scope.ok = function() {
+                     doDelete();
+                     $modalInstance.dismiss('cancel');
+                    //$modalInstance.close($scope.selected);
+                 };
+                 $scope.cancel = function() {
+                     reset();
+                     $modalInstance.dismiss('cancel');
+                 };
+                 $scope.closeDialog = function(){
+                     reset();
+                     $modalInstance.dismiss('cancel');
+                 }
+             };
+
+             $scope.doDeletePop = function()
+             {
+                ModalUtil.createModal($modal,$scope,$scope.ModalDeleteCtrl,'confirmDialog.html');
+             };
+
+            $scope.ModalPushMsgCtrl = function($scope, $modalInstance) {
+                $scope.ok = function() {
+                    pushMessage($scope.messageContent);
+                    $modalInstance.dismiss('cancel');
+                };
+                $scope.cancel = function() {
+                    $modalInstance.dismiss('cancel');
+                };
+                $scope.closePushDialog = function(){
+                    $modalInstance.dismiss('cancel');
+                }
+            };
+
+            $scope.popUpPushDialog = function()
+            {
+                reset();
+                ModalUtil.createModal($modal,$scope,$scope.ModalPushMsgCtrl,'submitPushDialog.html');
+            };
+            //搜索关键字
+            $scope.searchValue = '';
+
+            //未读消息数目
+            $rootScope.unReadedMsgCount = 0;
+
+            //消息列表
+            $scope.messages = [
+            ];
+
+            /*                    //重置搜索关键字
+             $scope.reset = function () {
+             $scope.searchValue = '';
+             };*/
+
+            //服务器推送消息
+            var pushMessage = function(alert)
+            {
+                window.JpushServer.sendJpushMsg(alert,function(msg) {
+                    alert("success:"+msg);
+                }, function(msg) {
+                    alert("failed:"+msg);
+                });
+            };
+
+            //延迟搜索，监控searchValue输入变化
+            var timeout;
+            $scope.$watch('searchValue',function(newValue,oldValue,scope){
+                if(newValue){
+                    if(newValue != oldValue){
+                        if(timeout){
+                            $timeout.cancel(timeout);
+                        }
+                        timeout = $timeout(function(){
+                            //使用newValue过滤&刷新列表数据
+                            $scope.searchMessage(newValue);
+                        },500)
+                    }
+                    //$scope.$apply();
+                }
+            });
+            $scope.putAllFilteredMessageIds = function()
+            {
+                $rootScope.choosedEditIds = [];
+                angular.forEach($scope.messages,function(data,index,array)
+                {
+                    $rootScope.choosedEditIds.push(data.id);
+                });
+            };
 
 
+
+            $scope.setRead = function()
+            {
+                var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
+                db.transaction(function(tx){
+                    var sql= '';
+                    if($rootScope.selectAllFlag)
+                    {
+                        sql = "update jpush_message set readflag = 1";
+                    }
+                    else
+                    {
+                        var iDstr = '(';//组装数组数据传递给sqlite
+                        angular.forEach($rootScope.choosedEditIds,function(data,index,array)
+                        {
+                            iDstr = iDstr+array[index]+',';
+                        });
+                        iDstr = iDstr+"-1)"//组装完毕
+                        sql = "update jpush_message set readflag = 1 where id in "+iDstr;
+                    }
+                    tx.executeSql(sql,[], function (tx, res) {
+                        $scope.$apply(function()
+                        {
+                            $scope.searchMessage($scope.searchValue);
+                            //reset();
+                            //$state.go('home',{});
+                            //window.location.reload();
+                        });
+
+                    });
+                });
+            };
+            //$scope.doDeletePop();
             CordovaService.ready.then(function () {
                 /*cordova已经准备好了*/
 
-
-                //从表jpush_message中遍历出过滤后的messages，返回到$scope.messages
-                var searchMessage = function(searchValue){
-                    var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
-                        db.transaction(function(tx){
-                            var sql1 = "select * from jpush_message where messageContent like '%"+searchValue+"%'";
-                            tx.executeSql(sql1,[], function (tx, res) {
-                                $scope.$apply(function()
-                                {
-                                    $scope.messages = [];
-                                    for(var i= 0;i<res.rows.length;i++)
-                                    {
-                                        $scope.messages.push(res.rows.item(res.rows.length-i-1));
-                                    }
-                                });
-
-                            });
-
-                            var sql2 = "select count(*) as cnts from jpush_message where messageContent like '%"+searchValue+"%' and readflag=0";
-                            tx.executeSql(sql2,[], function (tx, res) {
-                                $scope.$apply(function()
-                                {
-                                    $rootScope.unReadedMsgCount = res.rows.item(0).cnts;
-                                });
-                            });
-                        });
-                    reset();
-                };
-                var reset = function()
-                {
-                    $rootScope.dateRefresh = (new Date()).valueOf();
-                    $rootScope.choosedId = -1;
-                    $rootScope.showEditFlag = false;
-                    $rootScope.selectAllFlag = false;
-                    $rootScope.choosedEditIds = [];
-                    $scope.editMessage = '编辑';
-                    $scope.selectMessage = '全选';
-                }
-//删除确认弹框
-                $scope.doDelete = function()
-                {
-                    var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
-                    db.transaction(function(tx){
-                        var sql= '';
-                        if($rootScope.selectAllFlag||($rootScope.choosedEditIds.length==$scope.messages.length))
-                        {
-                            sql = "delete from jpush_message";
-                        }
-                        else
-                        {
-                            var iDstr = '(';//组装数组数据传递给sqlite
-                            angular.forEach($rootScope.choosedEditIds,function(data,index,array)
-                            {
-                                iDstr = iDstr+array[index]+',';
-                            });
-                            iDstr = iDstr+"-1)"//组装完毕
-                            sql = "delete from jpush_message where id in"+iDstr;
-                        }
-                        tx.executeSql(sql,[], function (tx, res) {
-                            $scope.$apply(function()
-                            {
-                                searchMessage($scope.searchValue);
-                                //reset();
-                                //$state.go('home',{});
-                                //window.location.href = window.location.href;
-                            });
-                        });
-                    });
-                };
-                /*$scope.ModalDeleteCtrl = function($scope, $modalInstance) {
-                    $scope.ok = function() {
-                        doDelete();
-                        $modalInstance.close($scope.selected);
-                    };
-                    $scope.cancel = function() {
-                        $modalInstance.dismiss('cancel');
-                    };
-                    $scope.closeDialog = function(){
-                        $modalInstance.dismiss('cancel');
-                    }
-                };
-
-                $scope.doDeletePop = function()
-                {
-                    ModalUtil.createModal($modal,$scope,$scope.ModalDeleteCtrl,'module/template/confirmDialog.html');
-
-                };*/
 
                 //监控事件’deviceready‘ 程序主要入口
                 var onDeviceReady = function() {
                     //初始化
                     initiateUI();
 
-
-                    //搜索关键字
-                    $scope.searchValue = '';
-
-                    //未读消息数目
-                    $rootScope.unReadedMsgCount = 0;
-
-                    //消息列表
-                    $scope.messages = [
-                    ];
-
-/*                    //重置搜索关键字
-                    $scope.reset = function () {
-                        $scope.searchValue = '';
-                    };*/
-
-                    //服务器推送消息
-                    $scope.pushMessage = function(alert)
-                    {
-                        window.JpushServer.sendJpushMsg(alert,function(msg) {
-                            alert("success:"+msg);
-                        }, function(msg) {
-                            alert("failed:"+msg);
-                        });
-                    };
-
-                    //延迟搜索，监控searchValue输入变化
-                    var timeout;
-                    $scope.$watch('searchValue',function(newValue,oldValue,scope){
-                        if(newValue){
-                            if(newValue != oldValue){
-                                if(timeout){
-                                    $timeout.cancel(timeout);
-                                }
-                                timeout = $timeout(function(){
-                                    //使用newValue过滤&刷新列表数据
-                                    searchMessage(newValue);
-                                },500)
-                            }
-                            //$scope.$apply();
-                        }
-                    });
-                    $scope.putAllFilteredMessageIds = function()
-                    {
-                        $rootScope.choosedEditIds = [];
-                        angular.forEach($scope.messages,function(data,index,array)
-                        {
-                            $rootScope.choosedEditIds.push(data.id);
-                        });
-                    };
-
-
-
-                    $scope.setRead = function()
-                    {
-                        var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
-                        db.transaction(function(tx){
-                            var sql= '';
-                            if($rootScope.selectAllFlag)
-                            {
-                                sql = "update jpush_message set readflag = 1";
-                            }
-                            else
-                            {
-                                var iDstr = '(';//组装数组数据传递给sqlite
-                                angular.forEach($rootScope.choosedEditIds,function(data,index,array)
-                                {
-                                    iDstr = iDstr+array[index]+',';
-                                });
-                                iDstr = iDstr+"-1)"//组装完毕
-                                sql = "update jpush_message set readflag = 1 where id in "+iDstr;
-                            }
-                            tx.executeSql(sql,[], function (tx, res) {
-                                $scope.$apply(function()
-                                {
-                                    searchMessage($scope.searchValue);
-                                    //reset();
-                                    //$state.go('home',{});
-                                    //window.location.reload();
-                                });
-
-                            });
-                        });
-                    };
-                    searchMessage($scope.searchValue);
+                    $scope.searchMessage($scope.searchValue);
                 };
 
                 //监控事件"jpush.openNotification"
@@ -404,7 +423,7 @@ angular.module('home.controllers', ['fsCordova'])
                             tx.executeSql('CREATE TABLE IF NOT EXISTS jpush_message (id integer primary key NOT NULL,notificationId integer NOT NULL, messageContent text NOT NULL, pushDate timestamp NOT NULL,readflag integer)');
 
                             tx.executeSql("INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)", [messageContent,pushDate,notificationId,0], function(tx, res) {
-                                searchMessage($scope.searchValue);
+                                $scope.searchMessage($scope.searchValue);
                             }, function(e) {
                                 alert("ERROR: " + e.message);
                             });

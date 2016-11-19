@@ -1,8 +1,35 @@
+<script type="text/ng-template" id="confirmDialog.html">
+            <div class="modal-header">
+                <button type="button" ng-click="closePushDialog()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h3 style="font-size: 0.20rem;">提示</h3>
+            </div>
+            <div class="modal-body" style="font-size: 0.15rem;">
+                确认删除所选消息？
+            </div>
+            <div class="modal-footer" style="text-align: center;padding:0.1rem 0">
+                <button class="btn btn-default" style="width:100px;" ng-click="cancel()">否</button>
+                <button class="btn btn-default" style="width:100px;" ng-click="ok()">是</button>
+            </div>
+</script>
+<script type="text/ng-template" id="submitPushDialog.html">
+    <div class="modal-header">
+        <button type="button" ng-click="closeDialog()" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+        <h3 style="font-size: 0.20rem;">消息推送</h3>
+    </div>
+    <div class="modal-body" style="font-size: 0.15rem;">
+         <label>推送消息: <textarea type="text" ng-model="messageContent" placeholder="请输入你的推送内容"></textarea></label><br />
+    </div>
+    <div class="modal-footer" style="text-align: center;padding:0.1rem 0">
+        <button class="btn btn-default" style="width:100px;" ng-click="cancel()">取消</button>
+        <button class="btn btn-default" style="width:100px;" ng-click="ok()">提交</button>
+    </div>
+</script>
 
 <div ng-controller="homeController">
+
     <div class="view-header">
         <div class="col-xs-5 r1 left">
-            <a class="text-btn">关闭</a>
+            <a class="text-btn" ng-click="popUpPushDialog()">推送</a>
         </div>
         <div class="col-xs-3 r1 center">
             <span>
@@ -38,243 +65,13 @@
         </div>
 
         <div class="panel-nav" >
-
-<!--            <div class="text-title1">
-                2016.9.20
-            </div>
-            <div class="text-content1 col-lg-12">
-                <span>从极光推送来的消息</span>
-            </div>
-            &lt;!&ndash;            <div class="date col-lg-12">
-                            <div class="icon icon-inprocess-ss" style="float:left;"></div>
-                            <div  >{{query.entity.request.RequestDate | date:'yyyy年MM月dd日 HH:mm'}}</div>
-                        </div>&ndash;&gt;
-        </div>-->
     </div>
+
 
 
 </div>
-<!--
-    <div class="my-address-list" id="my-address-list">
-        <div id="cc-loading" style="display: none;">
-            <span></span>
-            玩命加载中...
-        </div>
-        <div class="touch" id="touch0">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;"> <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch1">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;"> <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch2">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch3">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch4">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch5">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch6">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch7">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch8">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch9">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-    </div>
--->
-<!--
-    <div class="my-address-list" id="my-address-list">
-        <div id="cc-loading">
-            <span></span>
-            玩命加载中...
-        </div>
-    </div>
--->
-
-<!--     <ion-list>
-       <ion-item>Hello!</ion-item>
-       <ion-item href="www.baidu.com">
-        go</ion-item>
-    </ion-list>-->
-<!--    <div class="my-address-list" id="my-address-list">
-        <div id="cc-loading" style="display: none;">
-            <span></span>
-            玩命加载中...
-        </div>
-        <div class="touch" id="touch0">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;"> <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch1">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;"> <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-        <div class="touch" id="touch2">
-            <div class="item" useraddressid="1">
-                <div class="list">
-                    <div class="name-phone">
-                        <span class="name">收货人姓名</span>
-                        <span class="phone">12345678912</span>
-                    </div>
-                    <div class="address-info">这里是收货人姓名</div>
-                </div>
-                <div class="icon2" style="height: 57px;">
-                    <i></i>
-                </div>
-                <a href="javascript:;" class="remove" style="height: 57px; line-height: 57px;">删除</a>
-            </div>
-        </div>
-    </div>-->
     <div ng-if="$root.selectAllFlag||$root.choosedEditIds.length!=0" style="position:fixed;bottom:0;height: 0.45rem;width: 100%;background-color: #efefef">
-        <div class="col-xs-6 r1 left" ng-click="doDelete()" style="text-align: center;font-size: 0.18rem;bottom:-0.1rem">
+        <div class="col-xs-6 r1 left" ng-click="doDeletePop()" style="text-align: center;font-size: 0.18rem;bottom:-0.1rem">
             <a class="text-btn" style="color: #293729">删除</a>
         </div>
         <div class="col-xs-6 r1 right" ng-click="unReadedMsgCount!=0&&setRead()" style="text-align: center;font-size: 0.18rem;bottom:-0.1rem">
@@ -282,44 +79,4 @@
         </div>
     </div>
 </div>
-<script>
-    $(function(){
 
-        //document.getElementById('cc-loading').style.display = 'none';
-        /*for(var i=0;i<3;i++){
-            var cont = '<div class="touch" id="touch'+i+'"><div class="item" userAddressId="1"><div class="list">';
-            cont += '<div class="name-phone"><span class="name">收货人姓名</span>';
-            cont += '<span class="phone">12345678912</span></div>';
-            cont += '<div class="address-info">这里是收货人姓名</div>';
-            cont += '</div><div class="icon2"><i></i></div><a href="javascript:;" class="remove">删除</a></div></div>';
-            $('#my-address-list').append(cont);
-        }*/
-        /*$(".item").each(function(){
-            var h = $(this).find(".list").height();
-            $(this).find("a").height(h+"px").css("line-height",h+"px");
-            $(this).find(".icon2").height(h+"px");
-        });*/
-/*
-        $(".list-group-item").on("swipeleft",function(){
-            $(this).addClass('selected').siblings().find(".item").removeClass('selected');
-            /!*$(this).find("a.remove").on("click",function(){
-                var touchId = $(this).parents(".touch").attr("id");
-                //执行删除效果
-                $("#"+touchId).css("border","0");
-                $("#"+touchId).stop().animate({
-                    height:"0",
-                    margin:"0"
-                },300,function(){
-                    $(this).remove();
-                })
-            })*!/
-        }).on("swiperight",function(){
-            $(this).stop().animate({
-            },1000,function(){
-                $(this).removeClass('selected');
-            })
-        })
-*/
-
-    })
-</script>
