@@ -19,6 +19,9 @@
         },
         "cordova-plugin-console": {
             "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
+        },
+        "jpushServerPlugin": {
+            "PACKAGE_NAME": "com.hpeJerry.JpushCordova"
         }
     },
     "dependent_plugins": {

@@ -40,5 +40,13 @@
         },
         "is_top_level": true,
         "variables": {}
+    },
+    "jpushServerPlugin": {
+        "source": {
+            "type": "local",
+            "path": "C:\\Cordova\\JpushServerPlugin"
+        },
+        "is_top_level": true,
+        "variables": {}
     }
 }

@@ -1,3 +1,4 @@
+cordova.define("jpushServerPlugin.JpushServerPlugin", function(require, exports, module) {
 var exec = require('cordova/exec');
 
 exports.coolMethod = function(arg0, success, error) {
@@ -18,3 +19,5 @@ jpushServerFunc.prototype.sendJpushMsg=function(alert,success, error) {
 
 var showt = new jpushServerFunc();
 module.exports = showt;
+
+});
