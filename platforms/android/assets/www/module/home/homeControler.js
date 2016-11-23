@@ -111,14 +111,18 @@ angular.module('home.controllers', ['fsCordova'])
             $rootScope.choosedId = -1; //用于记录当前侧滑事件发生在哪个消息上
             $rootScope.showEditFlag = false; //显示编辑图标
             $rootScope.selectAllFlag = false; //全选标志
+            $rootScope.deleteAllFlag = false; //全删标志
             $rootScope.choosedEditIds = []; //当前已选择编辑的消息列表
             $scope.editOptionMessages = ['编辑','取消']; //用于点击编辑/取消编辑的切换显示
             $scope.editMessage = '编辑'; //默认显示编辑，点击编辑之后显示取消
             $scope.selectMessage = '全选'; //全选和取消全选切换，默认显示全选
+            $scope.messageNum = 0; //记录当前消息的数目
 
             //$scope.doDeletePop();
             //切换编辑文字，并显示编辑图片
             $scope.showEdit = function () {
+                //切换编辑和取消编辑，都会重置全选标志selectAllFlag为false
+                $rootScope.selectAllFlag = false;
                 if($scope.editMessage==$scope.editOptionMessages[0])//点击编辑
                 {
                     $rootScope.showEditFlag = true;
@@ -130,14 +134,28 @@ angular.module('home.controllers', ['fsCordova'])
                     $scope.editMessage = $scope.editOptionMessages[0];
                     $rootScope.showEditFlag = false;
                 }
+                $scope.selectMessage = $rootScope.selectAllFlag?'取消全选':"全选";
             };
 
             //切换全选文字，并改变标志位
             $scope.selectAll = function () {
                 $rootScope.selectAllFlag = !$rootScope.selectAllFlag;
-                if(!$rootScope.selectAllFlag)
+                if(!$rootScope.selectAllFlag)//全选切换到取消全选时，将清除之前的选择
                 {
                     $rootScope.choosedEditIds = [];
+                }
+                else//取消全选切换到全选时，将获取当前经过筛选的消息id
+                {
+                    if($scope.searchValue == '')
+                    {//此时执行全删操作
+                        $rootScope.deleteAllFlag = true;
+                    }
+                    else {//取出当前$scope.messages的id
+                        angular.forEach($scope.messages,function(data,index,array)
+                        {
+                            $rootScope.choosedEditIds.push(data.id);
+                        });
+                    }
                 }
                 //切换全选，取消全选文字显示
                 $scope.selectMessage = $rootScope.selectAllFlag?'取消全选':"全选";
@@ -147,11 +165,26 @@ angular.module('home.controllers', ['fsCordova'])
             $scope.searchMessage = function(searchValue){
                 var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
                 db.transaction(function(tx){
-                    var sql1 = "select * from jpush_message where messageContent like '%"+searchValue+"%'";
+                    var sql1 = "";
+                    var sql2 = "";
+                    //if(searchValue==null||searchValue=='')
+                    //{
+                    //    sql1 = "select * from jpush_message";
+                    //    sql2 = "select count(*) as cnts from jpush_message";
+                    //}
+                    //else
+                    //{
+                        sql1 = "select * from jpush_message where messageContent like '%"+searchValue+"%'";
+                        sql2 = "select count(*) as cnts from jpush_message where messageContent like '%"+searchValue+"%' and readflag=0";
+                    //}
                     tx.executeSql(sql1,[], function (tx, res) {
                         $scope.$apply(function()
                         {
                             $scope.messages = [];
+                            if($scope.messageNum < res.rows.length)
+                            {
+                                $scope.messageNum = res.rows.length;
+                            }
                             for(var i= 0;i<res.rows.length;i++)
                             {
                                 $scope.messages.push(res.rows.item(res.rows.length-i-1));
@@ -160,7 +193,6 @@ angular.module('home.controllers', ['fsCordova'])
 
                     });
 
-                    var sql2 = "select count(*) as cnts from jpush_message where messageContent like '%"+searchValue+"%' and readflag=0";
                     tx.executeSql(sql2,[], function (tx, res) {
                         $scope.$apply(function()
                         {
@@ -180,35 +212,32 @@ angular.module('home.controllers', ['fsCordova'])
                 $scope.editMessage = '编辑';
                 $scope.selectMessage = '全选';
             };
-//删除确认弹框
+            //删除确认弹框
             var doDelete = function()
             {
                 var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
                 db.transaction(function(tx){
                     var sql= '';
-                    if($rootScope.selectAllFlag||($rootScope.choosedEditIds.length==$scope.messages.length))
-                    {
+                    if($rootScope.deleteAllFlag||$rootScope.choosedEditIds.length==$scope.messageNum)
+                    {//判断全删操作，消息数目大时拼接字符串太消耗性能
                         sql = "delete from jpush_message";
                     }
                     else
                     {
-                        var iDstr = '(';//组装数组数据传递给sqlite
-                        angular.forEach($rootScope.choosedEditIds,function(data,index,array)
-                        {
-                            iDstr = iDstr+array[index]+',';
-                        });
-                        iDstr = iDstr+"-1)"//组装完毕
+                        var iDstr = "("+$rootScope.choosedEditIds.join()+")";
+
                         sql = "delete from jpush_message where id in"+iDstr;
                     }
                     tx.executeSql(sql,[], function (tx, res) {
                         $scope.$apply(function()
                         {
                             $scope.searchMessage($scope.searchValue);
-                            //reset();
-                            //$state.go('home',{});
-                            //window.location.href = window.location.href;
                         });
                     });
+                    if($rootScope.selectAllFlag)
+                    {
+                        $scope.searchValue = '';
+                    }
                 });
             };
             $scope.ModalDeleteCtrl = function($scope, $modalInstance) {
@@ -278,17 +307,18 @@ angular.module('home.controllers', ['fsCordova'])
             //延迟搜索，监控searchValue输入变化
             var timeout;
             $scope.$watch('searchValue',function(newValue,oldValue,scope){
-                if(newValue){
-                    if(newValue != oldValue){
-                        if(timeout){
-                            $timeout.cancel(timeout);
-                        }
-                        timeout = $timeout(function(){
-                            //使用newValue过滤&刷新列表数据
-                            $scope.searchMessage(newValue);
-                        },500)
+                if(newValue==undefined)
+                {
+                    newValue = '';
+                }
+                if(newValue != oldValue){
+                    if(timeout){
+                        $timeout.cancel(timeout);
                     }
-                    //$scope.$apply();
+                    timeout = $timeout(function(){
+                        //使用newValue过滤&刷新列表数据
+                        $scope.searchMessage(newValue);
+                    },500)
                 }
             });
             $scope.putAllFilteredMessageIds = function()
@@ -313,21 +343,13 @@ angular.module('home.controllers', ['fsCordova'])
                     }
                     else
                     {
-                        var iDstr = '(';//组装数组数据传递给sqlite
-                        angular.forEach($rootScope.choosedEditIds,function(data,index,array)
-                        {
-                            iDstr = iDstr+array[index]+',';
-                        });
-                        iDstr = iDstr+"-1)"//组装完毕
+                        var iDstr = "("+$rootScope.choosedEditIds.join()+")";
                         sql = "update jpush_message set readflag = 1 where id in "+iDstr;
                     }
                     tx.executeSql(sql,[], function (tx, res) {
                         $scope.$apply(function()
                         {
                             $scope.searchMessage($scope.searchValue);
-                            //reset();
-                            //$state.go('home',{});
-                            //window.location.reload();
                         });
 
                     });
@@ -394,7 +416,6 @@ angular.module('home.controllers', ['fsCordova'])
                         $rootScope.dateRefresh = (new Date()).valueOf();
 
                         var iDkey = "cn.jpush.android.NOTIFICATION_ID";// NOTIFICATION_ID的键
-                        var event_extras = event.extras; // 包含NOTIFICATION_ID数值
 
                         //数据库存储字段
                         var messageContent;
@@ -403,17 +424,18 @@ angular.module('home.controllers', ['fsCordova'])
 
                         //给存储字段进行赋值
                         if (device.platform == "Android") {
+                            var event_extras = event.extras;
+                            for(var i in event_extras) {
+                                if(i == iDkey)
+                                {
+                                    notificationId = event_extras[i];
+                                }
+                            }
                             messageContent = event.alert;
                             //pushDate.setTime(date);
                         } else {
-                            event_extras = event.aps.extras;
+                            notificationId = event._j_msgid;
                             messageContent = event.aps.alert;
-                        }
-                        for(var i in event_extras) {
-                            if(i == iDkey)
-                            {
-                                notificationId = event_extras[i];
-                            }
                         }
 
                         //存储数据
