@@ -118,6 +118,9 @@ angular.module('home.controllers', ['fsCordova'])
             $scope.selectMessage = '全选'; //全选和取消全选切换，默认显示全选
             $scope.messageNum = 0; //记录当前消息的数目
 
+            $scope.messages = [];//当前显示的消息列表
+            $scope.notificationIds = []; //当前数据库所有的Ids
+
             //$scope.doDeletePop();
             //切换编辑文字，并显示编辑图片
             $scope.showEdit = function () {
@@ -375,7 +378,6 @@ angular.module('home.controllers', ['fsCordova'])
                         $rootScope.dateRefresh = (new Date()).valueOf();
 
                         var iDkey = "cn.jpush.android.NOTIFICATION_ID";// NOTIFICATION_ID的键
-                        var event_extras = event.extras; // 包含NOTIFICATION_ID数值
 
                         //数据库存储字段
                         var messageContent;
@@ -385,24 +387,42 @@ angular.module('home.controllers', ['fsCordova'])
                         //给存储字段进行赋值
                         if (device.platform == "Android") {
                             messageContent = event.alert;
+                            var event_extras = event.extras; // 包含NOTIFICATION_ID数值
+                            for(var i in event_extras) {
+                                if(i == iDkey)
+                                {
+                                    notificationId = event_extras[i];
+                                }
+                            }
                             //pushDate.setTime(date);
                         } else {
-                            var event_extras = event.aps.extras;
+                            notificationId = event._j_msgid;
                             messageContent = event.aps.alert;
                         }
-                        for(var i in event_extras) {
-                            if(i == iDkey)
-                            {
-                                notificationId = event_extras[i];
-                            }
-                        }
-                        $state.go('message-detail',{Content:event.alert,PushDate:pushDate});
 
-                        //下面代码是为了更新消息的已读状态
+
+                        $state.go('message-detail',{Content:messageContent,PushDate:pushDate});
+
                         var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
+                        //判断这条消息是否已在onReceiveNotification事件里被保存
+                        //下面代码是为了更新消息的已读状态
                         db.transaction(function(tx){
-                            var sql = "update jpush_message set readflag = 1 where notificationId="+notificationId;
+                            var sql = "select count(*) as cnts from jpush_message where notificationId =" +notificationId;
                             tx.executeSql(sql,[], function (tx, res) {
+                                if(res.rows.item(0).cnts==0)
+                                {
+                                    var sql1 = "INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)";
+                                    tx.executeSql(sql1, [messageContent,pushDate,notificationId,1], function(tx, res) {
+                                        $scope.searchMessage($scope.searchValue);
+                                    }, function(e) {
+                                        alert("ERROR: " + e.message);
+                                    });
+                                }
+                                else {
+                                    var sql2 = "update jpush_message set readflag = 1 where notificationId="+notificationId;
+                                    tx.executeSql(sql2,[], function (tx, res) {
+                                    });
+                                }
                             });
                         });
                     } catch (exception) {
@@ -443,12 +463,27 @@ angular.module('home.controllers', ['fsCordova'])
                         db.transaction(function(tx) {
                             //tx.executeSql('DROP TABLE IF EXISTS jpush_message');
                             tx.executeSql('CREATE TABLE IF NOT EXISTS jpush_message (id integer primary key NOT NULL,notificationId integer NOT NULL, messageContent text NOT NULL, pushDate timestamp NOT NULL,readflag integer)');
+                            var sql = "select count(*) as cnts from jpush_message where notificationId =" +notificationId;
+                            tx.executeSql(sql,[], function (tx, res) {
+                                $scope.$apply(function()
+                                {
+                                    if(res.rows.item(0).cnts==0)
+                                    {
+                                        var sql1 = "INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)";
+                                        tx.executeSql(sql1, [messageContent,pushDate,notificationId,0], function(tx, res) {
+                                            $scope.searchMessage($scope.searchValue);
+                                        }, function(e) {
+                                            alert("ERROR: " + e.message);
+                                        });
+                                    }
+                                });
 
-                            tx.executeSql("INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)", [messageContent,pushDate,notificationId,0], function(tx, res) {
+                            });
+                            /*tx.executeSql("INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)", [messageContent,pushDate,notificationId,0], function(tx, res) {
                                 $scope.searchMessage($scope.searchValue);
                             }, function(e) {
                                 alert("ERROR: " + e.message);
-                            });
+                            });*/
                         });
 
                     } catch (exception) {
