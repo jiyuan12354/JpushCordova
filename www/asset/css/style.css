@@ -623,3 +623,8 @@ p .content {
 {
   padding: 0px;
 }
+
+
+.modal-dialog .modal-content{
+  bottom:2rem;
+}
