@@ -614,6 +614,7 @@ p .content {
 .modal-header
 {
   font-size: 0.08rem;
+  border-bottom: 0.02rem solid #d56334;
 }
 .modal-body
 {
