@@ -614,6 +614,7 @@ p .content {
 .modal-header
 {
   font-size: 0.08rem;
+  border-bottom: 0.02rem solid #d56334;
 }
 .modal-body
 {
@@ -622,4 +623,9 @@ p .content {
 .modal-footer
 {
   padding: 0px;
+}
+
+
+.modal-dialog .modal-content{
+  bottom:2rem;
 }
