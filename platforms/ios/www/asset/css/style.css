@@ -607,3 +607,25 @@ p .content {
   text-align: center;
   text-decoration: none;
 }
+.text-btn:hover, .text-btn:focus
+{
+  text-decoration: none;
+}
+.modal-header
+{
+  font-size: 0.08rem;
+  border-bottom: 0.02rem solid #d56334;
+}
+.modal-body
+{
+  font-size: 0.04rem;
+}
+.modal-footer
+{
+  padding: 0px;
+}
+
+
+.modal-dialog .modal-content{
+  bottom:2rem;
+}
