@@ -1,12 +1,12 @@
 {
-    "CFNetwork.framework": 1,
-    "CoreFoundation.framework": 1,
-    "CoreTelephony.framework": 1,
-    "SystemConfiguration.framework": 1,
-    "Foundation.framework": 1,
-    "UIKit.framework": 1,
-    "Security.framework": 1,
-    "libz.tbd": 1,
-    "AdSupport.framework": 1,
-    "UserNotifications.framework": 1
+    "CFNetwork.framework": 2,
+    "CoreFoundation.framework": 2,
+    "CoreTelephony.framework": 2,
+    "SystemConfiguration.framework": 2,
+    "Foundation.framework": 2,
+    "UIKit.framework": 2,
+    "Security.framework": 2,
+    "libz.tbd": 2,
+    "AdSupport.framework": 2,
+    "UserNotifications.framework": 2
 }

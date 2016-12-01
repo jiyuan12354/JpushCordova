@@ -25,4 +25,6 @@
     </platform>
     <engine name="android" spec="~5.2.2" />
     <plugin name="cordova-plugin-console" spec="~1.0.4" />
+    <preference name="UIWebViewBounce" value="false" />
+    <preference name="DisallowOverscroll" value="true" />
 </widget>

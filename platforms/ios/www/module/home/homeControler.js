@@ -431,7 +431,9 @@ angular.module('home.controllers', ['fsCordova'])
                 };
 
                 var onReceiveNotification = function(event) {
+                                      alert("1");
                     try {
+                                      alert("2");
                         //根据当前时间，刷新每个消息的日期过滤器，当天只显示HH:mm:ss，否则显示yyyy-MM-dd
                         $rootScope.dateRefresh = (new Date()).valueOf();
 
@@ -444,6 +446,7 @@ angular.module('home.controllers', ['fsCordova'])
 
                         //给存储字段进行赋值
                         if (device.platform == "Android") {
+                                      alert("3");
                             var event_extras = event.extras;
                             for(var i in event_extras) {
                                 if(i == iDkey)
@@ -454,6 +457,7 @@ angular.module('home.controllers', ['fsCordova'])
                             messageContent = event.alert;
                             //pushDate.setTime(date);
                         } else {
+                                      alert("4");
                             notificationId = event._j_msgid;
                             messageContent = event.aps.alert;
                         }
@@ -461,16 +465,20 @@ angular.module('home.controllers', ['fsCordova'])
                         //存储数据
                         var db = window.sqlitePlugin.openDatabase({name:"JpushMessageDB.db",location:1});
                         db.transaction(function(tx) {
+                                       alert("5");
                             //tx.executeSql('DROP TABLE IF EXISTS jpush_message');
                             tx.executeSql('CREATE TABLE IF NOT EXISTS jpush_message (id integer primary key NOT NULL,notificationId integer NOT NULL, messageContent text NOT NULL, pushDate timestamp NOT NULL,readflag integer)');
                             var sql = "select count(*) as cnts from jpush_message where notificationId =" +notificationId;
                             tx.executeSql(sql,[], function (tx, res) {
+                                          alert("6");
                                 $scope.$apply(function()
                                 {
+                                              alert("7");
                                     if(res.rows.item(0).cnts==0)
                                     {
                                         var sql1 = "INSERT INTO jpush_message (messageContent, pushDate,notificationId,readflag) VALUES (?,?,?,?)";
                                         tx.executeSql(sql1, [messageContent,pushDate,notificationId,0], function(tx, res) {
+                                                      alert("8");
                                             $scope.searchMessage($scope.searchValue);
                                         }, function(e) {
                                             alert("ERROR: " + e.message);
@@ -487,8 +495,10 @@ angular.module('home.controllers', ['fsCordova'])
                         });
 
                     } catch (exception) {
+                                      alert("9");
                         console.log("JPushPlugin:onReceiveNotification" + exception);
                     }
+                                      alert("10");
                 };
 
                 //初始化Jpush插件

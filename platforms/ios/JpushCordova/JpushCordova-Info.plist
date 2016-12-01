@@ -56,7 +56,5 @@
       <string>UIInterfaceOrientationPortraitUpsideDown</string>
       <string>UIInterfaceOrientationLandscapeRight</string>
     </array>
-    <key>UIWebViewBounce</key>
-    <false/>
   </dict>
 </plist>
